@@ -32,11 +32,7 @@ impl Default for Myapp {
 
 
 impl eframe::App for Myapp {
-
-    fn name(&self) -> &str {
-        "Morpion"
-    }
-
+    
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("My egui Application");
