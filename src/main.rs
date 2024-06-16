@@ -3,17 +3,16 @@ use egui_extras;
 
 fn main() {
     println!("Hello, world!");
-    eframe::run_native(
+    let win_options = eframe::NativeOptions::default();
+    let _ = eframe::run_native(
         "My app",
-        eframe::NativeOptions {
-            viewport: egui::ViewportBuilder::default().with_inner_size([320.0, 240.0]),
-            ..Default::default()},
-            Box::new(|cc| {
-                egui_extras::install_image_loaders(&cc.egui_ctx);
-                
-                Box::<Myapp>::default() }
-            ),
-        );
+        win_options,
+        Box::new(|cc| {
+            egui_extras::install_image_loaders(&cc.egui_ctx);
+
+            Box::<Myapp>::default() }
+        ),
+    );
         
 }
 
@@ -33,6 +32,11 @@ impl Default for Myapp {
 
 
 impl eframe::App for Myapp {
+
+    fn name(&self) -> &str {
+        "Morpion"
+    }
+
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("My egui Application");
@@ -45,7 +49,7 @@ impl eframe::App for Myapp {
             if ui.button("Increment").clicked() {
                 self.age += 1;
             }
-            ui.label(format!("Hello '{}', age {}", self.name, self.age));
+            ui.label(format!("Hello {}, aged {}", self.name, self.age));
 
         });
     }
