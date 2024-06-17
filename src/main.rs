@@ -1,43 +1,44 @@
 use eframe::egui;
-use egui::{FontId, RichText, Color32, FontFamily};
+use egui::{Color32, FontFamily, FontId, RichText, Vec2};
 use egui_extras;
 
+fn add_fonts(ctx: &egui::Context) {
+    // Load fonts
+    // Start with the default fonts (we will be adding to them rather than replacing them).
+    let mut fonts = egui::FontDefinitions::default();
+
+    // Install my own font (maybe supporting non-latin characters).
+    // .ttf and .otf files supported.
+    fonts.font_data.insert(
+        "roboto".to_owned(),
+        egui::FontData::from_static(include_bytes!("../assets/Roboto-Regular.ttf")),
+    );
+
+    fonts
+        .families
+        .insert(FontFamily::Name("roboto".into()), vec!["roboto".to_owned()]);
+
+    ctx.set_fonts(fonts);
+}
 
 // Main function obviously ;)
 fn main() {
     // Window options: default (size, resizable, etc)
-    let win_options = eframe::NativeOptions::default();
+    let mut win_option = eframe::NativeOptions::default();
+    // Set the window size
+    win_option.viewport.inner_size = Some(Vec2::new(400.0, 300.0));
+
     // Run the app
     let _ = eframe::run_native(
         "My app",
-        win_options,
+        win_option,
         Box::new(|cc| {
             egui_extras::install_image_loaders(&cc.egui_ctx);
-
-            // Load fonts
-            // Start with the default fonts (we will be adding to them rather than replacing them).
-            let mut fonts = egui::FontDefinitions::default();
-
-            // Install my own font (maybe supporting non-latin characters).
-            // .ttf and .otf files supported.
-            fonts.font_data.insert(
-                "roboto".to_owned(),
-                egui::FontData::from_static(include_bytes!("../assets/Roboto-Regular.ttf")),
-            );
-
-            fonts.families.insert(
-                FontFamily::Name("roboto".into()),
-                vec!["roboto".to_owned(), "sans-serif".to_owned()],
-            );
-
-
-            cc.egui_ctx.set_fonts(fonts);
+            add_fonts(&cc.egui_ctx);
             // Create the app
             Box::<Myapp>::default()
-        }
-        ),
+        }),
     );
-        
 }
 
 //
@@ -55,7 +56,6 @@ impl Default for Myapp {
     }
 }
 
-
 impl eframe::App for Myapp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
@@ -72,7 +72,10 @@ impl eframe::App for Myapp {
 
             ui.label(format!("Hello {}, aged {}", self.name, self.age));
             // ui.label(RichText::new("This is a simple egui application").font(FontId::proportional(10.0)));
-            ui.label(RichText::new("This is a simple egui application").font(FontId::new(20.0, FontFamily::Name ("roboto".into()))));
+            ui.label(
+                RichText::new("This is a simple egui application")
+                    .font(FontId::new(20.0, FontFamily::Name("roboto".into()))),
+            );
             ui.label(RichText::new("This is a simple egui application").color(Color32::RED));
         });
     }
