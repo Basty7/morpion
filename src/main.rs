@@ -1,5 +1,5 @@
 use eframe::egui;
-use egui::{Color32, FontFamily, FontId, RichText, Vec2};
+use egui::{Color32, FontFamily, FontId, ImageSource, RichText, Vec2};
 use egui_extras;
 
 fn add_fonts(ctx: &egui::Context) {
@@ -77,6 +77,26 @@ impl eframe::App for Myapp {
                     .font(FontId::new(20.0, FontFamily::Name("roboto".into()))),
             );
             ui.label(RichText::new("This is a simple egui application").color(Color32::RED));
+            // add an image
+            ui.image(ImageSource::from("../assets/icon.png"));
+
+            egui::Grid::new("some_unique_id").show(ui, |ui| {
+                if ui.button("Button 1").clicked() {
+                    println!("Button 1 clicked");
+                }
+                ui.label("First row, first column");
+                ui.label("First row, second column");
+                ui.end_row();
+
+                ui.label("Second row, first column");
+                ui.label("Second row, second column");
+                ui.label("Second row, third column");
+                ui.end_row();
+
+                ui.horizontal(|ui| { ui.label("Same"); ui.label("cell"); });
+                ui.label("Third row, second column");
+                ui.end_row();
+            });
         });
     }
 }
