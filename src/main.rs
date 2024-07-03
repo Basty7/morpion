@@ -8,7 +8,7 @@ use image;
 // DONE: Handle the end of the game
 // DONE: Add a way to restart the game
 // DONE: Add a warning when a player tries to play on a non-empty case
-// DOING: Add an icon to the window
+// DONE: Add an icon to the window
 // TODO: (later) Add a way to play against the computer
 
 fn add_fonts(ctx: &egui::Context) {
@@ -62,7 +62,7 @@ fn main() {
 
     // Run the app
     let _ = eframe::run_native(
-        "My app",
+        "Tit Tac Toe",
         win_option,
         Box::new(|cc| {
             egui_extras::install_image_loaders(&cc.egui_ctx);
