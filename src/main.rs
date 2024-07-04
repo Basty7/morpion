@@ -1,8 +1,8 @@
+#![windows_subsystem = "windows"]
 use eframe::egui;
 use egui::{FontFamily, Vec2};
 use egui_extras;
 use image;
-
 // DONE: Check if someone won the game
 // DONE: Handle the case where the game is a draw
 // DONE: Handle the end of the game
@@ -53,7 +53,6 @@ fn main() {
     // Window options: default (size, resizable, etc)
     
     let mut win_option: eframe::NativeOptions = eframe::NativeOptions {
-
         ..Default::default()
     };
     // Set the window size
