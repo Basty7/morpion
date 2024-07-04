@@ -1,6 +1,6 @@
 #![windows_subsystem = "windows"]
 use eframe::egui;
-use egui::{FontFamily, Vec2};
+use egui::{FontFamily, FontId, RichText, Vec2};
 use egui_extras;
 use image;
 // DONE: Check if someone won the game
@@ -22,36 +22,44 @@ fn add_fonts(ctx: &egui::Context) {
         "roboto".to_owned(),
         egui::FontData::from_static(include_bytes!("../assets/Roboto-Regular.ttf")),
     );
+    fonts.font_data.insert(
+        "GaMaamli".to_owned(),
+        egui::FontData::from_static(include_bytes!("../assets/GaMaamli-Regular.ttf")),
+    );
 
     fonts
         .families
         .insert(FontFamily::Name("roboto".into()), vec!["roboto".to_owned()]);
+    fonts.families.insert(
+        FontFamily::Name("GaMaamli".into()),
+        vec!["GaMaamli".to_owned()],
+    );
 
     ctx.set_fonts(fonts);
 }
 
 fn load_icon() -> egui::IconData {
-	let (icon_rgba, icon_width, icon_height) = {
-		let icon = include_bytes!("../assets/icon.png");
-		let image = image::load_from_memory(icon)
-			.expect("Failed to open icon path")
-			.into_rgba8();
-		let (width, height) = image.dimensions();
-		let rgba = image.into_raw();
-		(rgba, width, height)
-	};
-	
-	egui::IconData {
-		rgba: icon_rgba,
-		width: icon_width,
-		height: icon_height,
-	}
+    let (icon_rgba, icon_width, icon_height) = {
+        let icon = include_bytes!("../assets/icon.png");
+        let image = image::load_from_memory(icon)
+            .expect("Failed to open icon path")
+            .into_rgba8();
+        let (width, height) = image.dimensions();
+        let rgba = image.into_raw();
+        (rgba, width, height)
+    };
+
+    egui::IconData {
+        rgba: icon_rgba,
+        width: icon_width,
+        height: icon_height,
+    }
 }
 
 // Main function obviously ;)
 fn main() {
     // Window options: default (size, resizable, etc)
-    
+
     let mut win_option: eframe::NativeOptions = eframe::NativeOptions {
         ..Default::default()
     };
@@ -77,7 +85,7 @@ struct Myapp {
     board: GameBoard,
     turn: bool,
     show_warning: bool,
-    ended:bool,
+    ended: bool,
 }
 
 impl Default for Myapp {
@@ -86,7 +94,7 @@ impl Default for Myapp {
             board: GameBoard::default(),
             turn: false,
             show_warning: false,
-            ended:false,
+            ended: false,
         }
     }
 }
@@ -108,15 +116,19 @@ impl Default for GameBoard {
     fn default() -> Self {
         let mut cases = Vec::new();
         for _i in 0..9 {
-            cases.push(GameCase {
-                player: 0,
-            });
+            cases.push(GameCase { player: 0 });
         }
         Self { cases }
     }
 }
 
-fn draw_grid(ui: &mut egui::Ui, board: &mut GameBoard, turn: &mut bool, show_warning: &mut bool, ended: &mut bool) {
+fn draw_grid(
+    ui: &mut egui::Ui,
+    board: &mut GameBoard,
+    turn: &mut bool,
+    show_warning: &mut bool,
+    ended: &mut bool,
+) {
     egui::Grid::new("grid")
         .spacing(Vec2::new(10., 10.))
         .show(ui, |ui| {
@@ -131,7 +143,7 @@ fn draw_grid(ui: &mut egui::Ui, board: &mut GameBoard, turn: &mut bool, show_war
                     };
                     let bouton2 = ui.add_sized(Vec2::new(100.0, 100.0), bouton);
 
-                    if bouton2.clicked() && case.player == 0 && !*ended && !*show_warning{
+                    if bouton2.clicked() && case.player == 0 && !*ended && !*show_warning {
                         case.player = 1 + *turn as i32;
                         *turn = !*turn;
                     } else if bouton2.clicked() && case.player != 0 {
@@ -193,27 +205,41 @@ impl eframe::App for Myapp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.horizontal(|ui| {
-                ui.heading(format!(
-                    "Play Tic-Tac-Toe \nIt's player {}'s turn.",
-                    (self.turn as i32 + 1)
+                ui.heading(RichText::new(
+                    format!(
+                        "Play Tic-Tac-Toe \nIt's player {}'s turn.",
+                        (self.turn as i32 + 1)
+                    ))
+                    .font(FontId::new(20.0, FontFamily::Name("GaMaamli".into())),
                 ));
-                let play_again = ui.add_sized(
-                    [40., 40.],
-                    egui::ImageButton::new(egui::include_image!("../assets/R.png")),
-                ).on_hover_text("Play again");
+                let play_again = ui
+                    .add_sized(
+                        [40., 40.],
+                        egui::ImageButton::new(egui::include_image!("../assets/R.png")),
+                    )
+                    .on_hover_text("Play again");
 
                 if play_again.clicked() {
                     self.board = GameBoard::default();
                     self.turn = false;
                 }
             });
-            draw_grid(ui, &mut self.board, &mut self.turn, &mut self.show_warning, &mut self.ended);
+            draw_grid(
+                ui,
+                &mut self.board,
+                &mut self.turn,
+                &mut self.show_warning,
+                &mut self.ended,
+            );
             if self.show_warning {
                 egui::Window::new("Warning")
                     .collapsible(false)
                     .title_bar(true)
                     .show(ctx, |ui| {
-                        ui.label("You should only play on empty cases!");
+                        ui.label(
+                            RichText::new("You should only play on empty cases!")
+                                .font(FontId::new(20.0, FontFamily::Name("GaMaamli".into()))),
+                        );
                         if ui.button("Close").clicked() {
                             self.show_warning = false; // Set this to false to close the warning box
                         }
@@ -227,7 +253,10 @@ impl eframe::App for Myapp {
                     .collapsible(false)
                     .title_bar(true)
                     .show(ctx, |ui| {
-                        ui.label("It's a draw!");
+                        ui.label(
+                            RichText::new("It's a draw!")
+                                .font(FontId::new(20.0, FontFamily::Name("GaMaamli".into()))),
+                        );
                         if ui.button("Play again").clicked() {
                             self.board = GameBoard::default();
                             self.turn = false;
@@ -240,8 +269,11 @@ impl eframe::App for Myapp {
                     .collapsible(false)
                     .title_bar(true)
                     .show(ctx, |ui| {
-                        ui.label(format!("Player {} won!", winner));
-                        if ui.button("Play again").clicked() {
+                        ui.label(
+                            RichText::new(format!("Player {} won!", winner))
+                                .font(FontId::new(20.0, FontFamily::Name("GaMaamli".into()))),
+                        );
+                        if ui.button("Play again !").clicked() {
                             self.board = GameBoard::default();
                             self.turn = false;
                             self.ended = false;
