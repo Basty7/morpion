@@ -1,8 +1,13 @@
-#![windows_subsystem = "windows"]
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
+
+use egui_extras;
+
+use eframe;
 use eframe::egui;
 use egui::{FontFamily, FontId, RichText, Vec2};
-use egui_extras;
-use image;
+
+#[cfg(target_arch = "wasm32")]
+
 // DONE: Check if someone won the game
 // DONE: Handle the case where the game is a draw
 // DONE: Handle the end of the game
@@ -38,34 +43,20 @@ fn add_fonts(ctx: &egui::Context) {
     ctx.set_fonts(fonts);
 }
 
-fn load_icon() -> egui::IconData {
-    let (icon_rgba, icon_width, icon_height) = {
-        let icon = include_bytes!("../assets/icon.png");
-        let image = image::load_from_memory(icon)
-            .expect("Failed to open icon path")
-            .into_rgba8();
-        let (width, height) = image.dimensions();
-        let rgba = image.into_raw();
-        (rgba, width, height)
-    };
-
-    egui::IconData {
-        rgba: icon_rgba,
-        width: icon_width,
-        height: icon_height,
-    }
-}
-
 // Main function obviously ;)
+#[cfg(not(target_arch = "wasm32"))]
 fn main() {
     // Window options: default (size, resizable, etc)
 
     let mut win_option: eframe::NativeOptions = eframe::NativeOptions {
+        viewport: egui::ViewportBuilder::default().with_icon(
+            eframe::icon_data::from_png_bytes(&include_bytes!("../assets/icon.png")[..])
+                .expect("Failed to load icon"),
+        ),
         ..Default::default()
     };
     // Set the window size
     win_option.viewport.inner_size = Some(Vec2::new(500.0, 400.0));
-    win_option.viewport.icon = Some(load_icon().into());
 
     // Run the app
     let _ = eframe::run_native(
@@ -78,6 +69,25 @@ fn main() {
             Box::<Myapp>::default()
         }),
     );
+}
+
+#[cfg(target_arch = "wasm32")]
+fn main() {
+    let web_options = eframe::WebOptions::default();
+
+    wasm_bindgen_futures::spawn_local(async {
+        let start_result = eframe::WebRunner::new()
+            .start(
+                "the_canvas_id",
+                web_options,
+                Box::new(|cc| {
+                    egui_extras::install_image_loaders(&cc.egui_ctx);
+                    add_fonts(&cc.egui_ctx);
+                    Box::<Myapp>::default()
+                }),
+            )
+            .await;
+    });
 }
 
 //
@@ -205,13 +215,13 @@ impl eframe::App for Myapp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.horizontal(|ui| {
-                ui.heading(RichText::new(
-                    format!(
+                ui.heading(
+                    RichText::new(format!(
                         "Play Tic-Tac-Toe \nIt's player {}'s turn.",
                         (self.turn as i32 + 1)
                     ))
-                    .font(FontId::new(20.0, FontFamily::Name("GaMaamli".into())),
-                ));
+                    .font(FontId::new(20.0, FontFamily::Name("GaMaamli".into()))),
+                );
                 let play_again = ui
                     .add_sized(
                         [40., 40.],
@@ -224,6 +234,7 @@ impl eframe::App for Myapp {
                     self.turn = false;
                 }
             });
+            ui.add(egui::Image::new(egui::include_image!("../assets/icon.png")));
             draw_grid(
                 ui,
                 &mut self.board,
