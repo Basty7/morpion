@@ -1809,6 +1809,7 @@ dependencies = [
  "eframe",
  "egui",
  "egui_extras",
+ "image",
  "wasm-bindgen",
  "wasm-bindgen-futures",
 ]

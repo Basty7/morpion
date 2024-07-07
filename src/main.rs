@@ -6,8 +6,6 @@ use eframe;
 use eframe::egui;
 use egui::{FontFamily, FontId, RichText, Vec2};
 
-#[cfg(target_arch = "wasm32")]
-
 // DONE: Check if someone won the game
 // DONE: Handle the case where the game is a draw
 // DONE: Handle the end of the game
