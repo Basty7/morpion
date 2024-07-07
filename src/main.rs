@@ -234,7 +234,6 @@ impl eframe::App for Myapp {
                     self.turn = false;
                 }
             });
-            ui.add(egui::Image::new(egui::include_image!("../assets/icon.png")));
             draw_grid(
                 ui,
                 &mut self.board,
