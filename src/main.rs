@@ -6,6 +6,9 @@ use eframe;
 use eframe::egui;
 use egui::{FontFamily, FontId, RichText, Vec2};
 
+#[cfg(target_arch = "wasm32")]
+use eframe::web_sys;
+
 // DONE: Check if someone won the game
 // DONE: Handle the case where the game is a draw
 // DONE: Handle the end of the game
@@ -74,7 +77,7 @@ fn main() {
     let web_options = eframe::WebOptions::default();
 
     wasm_bindgen_futures::spawn_local(async {
-        let _ = eframe::WebRunner::new()
+        let start_result = eframe::WebRunner::new()
             .start(
                 "the_canvas_id",
                 web_options,
@@ -85,6 +88,24 @@ fn main() {
                 }),
             )
             .await;
+
+        // Remove the loading text and spinner
+        let loading_text = web_sys::window()
+            .and_then(|w| w.document())
+            .and_then(|d| d.get_element_by_id("loading_text"));
+        if let Some(loading_text) = loading_text {
+            match start_result {
+                Ok(_) => {
+                    loading_text.remove();
+                }
+                Err(e) => {
+                    loading_text.set_inner_html(
+                        "<p> The app has crashed. See the developer console for details. </p>",
+                    );
+                    panic!("Failed to start eframe: {e:?}");
+                }
+            }
+        }
     });
 }
 
