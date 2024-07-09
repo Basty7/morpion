@@ -1,5 +1,8 @@
 /target
 /.idea
 /.vscode
+/dist/index.html
+/dist/*.js
+/dist/*.wasm
 /dist
 TicTacToe.exe
