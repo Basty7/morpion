@@ -157,6 +157,7 @@ fn draw_grid(
     turn: &mut bool,
     show_warning: &mut bool,
     ended: &mut bool,
+    dark: bool,
 ) {
     egui::Grid::new("grid")
         .spacing(Vec2::new(10., 10.))
@@ -164,10 +165,25 @@ fn draw_grid(
             for j in 0..3 {
                 for i in 0..3 {
                     let case = &mut board.cases[i + j * 3];
-                    let bouton = match case.player {
-                        0 => egui::ImageButton::new(egui::include_image!("../assets/T.png")),
-                        1 => egui::ImageButton::new(egui::include_image!("../assets/X.png")),
-                        2 => egui::ImageButton::new(egui::include_image!("../assets/O.png")),
+                    let bouton = match (case.player, dark) {
+                        (0, true) => {
+                            egui::ImageButton::new(egui::include_image!("../assets/T.png"))
+                        }
+                        (0, false) => {
+                            egui::ImageButton::new(egui::include_image!("../assets/T.png"))
+                        }
+                        (1, true) => {
+                            egui::ImageButton::new(egui::include_image!("../assets/X.png"))
+                        }
+                        (1, false) => {
+                            egui::ImageButton::new(egui::include_image!("../assets/X-B.png"))
+                        }
+                        (2, true) => {
+                            egui::ImageButton::new(egui::include_image!("../assets/O.png"))
+                        }
+                        (2, false) => {
+                            egui::ImageButton::new(egui::include_image!("../assets/O-B.png"))
+                        }
                         _ => egui::ImageButton::new(egui::include_image!("../assets/T.png")),
                     };
                     let bouton2 = ui.add_sized(Vec2::new(100.0, 100.0), bouton);
@@ -241,10 +257,18 @@ impl eframe::App for Myapp {
                     ))
                     .font(FontId::new(20.0, FontFamily::Name("GaMaamli".into()))),
                 );
+
                 let play_again = ui
                     .add_sized(
                         [40., 40.],
-                        egui::ImageButton::new(egui::include_image!("../assets/R.png")),
+                        match ctx.style().visuals.dark_mode {
+                            true => {
+                                egui::ImageButton::new(egui::include_image!("../assets/R.png"))
+                            }
+                            false => {
+                                egui::ImageButton::new(egui::include_image!("../assets/R-B.png"))
+                            }
+                        },
                     )
                     .on_hover_text("Play again");
 
@@ -252,6 +276,8 @@ impl eframe::App for Myapp {
                     self.board = GameBoard::default();
                     self.turn = false;
                 }
+
+                egui::widgets::global_dark_light_mode_buttons(ui);
             });
             draw_grid(
                 ui,
@@ -259,6 +285,7 @@ impl eframe::App for Myapp {
                 &mut self.turn,
                 &mut self.show_warning,
                 &mut self.ended,
+                ctx.style().visuals.dark_mode,
             );
             if self.show_warning {
                 egui::Window::new("Warning")
