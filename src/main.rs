@@ -20,7 +20,6 @@ use eframe::web_sys;
 // DONE: Add an icon to the window
 // TODO: (later) Add a way to play against the computer
 
-
 fn add_fonts(ctx: &egui::Context) {
     // Load fonts
     // Start with the default fonts (we will be adding to them rather than replacing them).
@@ -340,7 +339,6 @@ impl eframe::App for Myapp {
                         }
                     });
             }
-            
         });
     }
 }
