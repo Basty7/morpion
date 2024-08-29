@@ -1,4 +1,7 @@
-#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
+#![cfg_attr(
+    not(debug_assertions),
+    windows_subsystem = "windows"
+)] // hide console window on Windows in release
 
 use egui_extras;
 
@@ -255,7 +258,7 @@ impl eframe::App for Myapp {
                         "Play Tic-Tac-Toe \nIt's player {}'s turn.",
                         (self.turn as i32 + 1)
                     ))
-                    .font(FontId::new(20.0, FontFamily::Name("GaMaamli".into()))),
+                        .font(FontId::new(20.0, FontFamily::Name("GaMaamli".into()))),
                 );
 
                 let play_again = ui
@@ -336,48 +339,7 @@ impl eframe::App for Myapp {
                         }
                     });
             }
-
-            // ui.horizontal(|ui| {
-            //     let name_label = ui.label("Your name: ");
-            //     ui.text_edit_singleline(&mut self.name)
-            //         .labelled_by(name_label.id);
-            // });
-            // ui.add(egui::Slider::new(&mut self.age, 0..=120).text("age"));
-            // if ui.button("Increment").clicked() {
-            //     self.age += 1;
-            // }
-
-            // ui.label(format!("Hello {}, aged {}", self.name, self.age));
-            // // ui.label(RichText::new("This is a simple egui application").font(FontId::proportional(10.0)));
-            // ui.label(
-            //     RichText::new("This is a simple egui application")
-            //         .font(FontId::new(20.0, FontFamily::Name("roboto".into()))),
-            // );
-            // ui.label(RichText::new("This is a simple egui application").color(Color32::RED));
-            // // add an image
-            // ui.add(Image::new(egui::include_image!("../assets/icon.png")).max_width(100.0));
-
-            // if ui.button("Button 1").clicked() {
-            //     println!("Button 1 clicked");
-            // }
-            // egui::Grid::new("some_unique_id").show(ui, |ui| {
-            //     ui.label("First row, first column");
-            //     ui.label("First row, second column");
-            //     ui.image(egui::include_image!("../assets/icon.png"));
-            //     ui.end_row();
-
-            //     ui.label("Second row, first column");
-            //     ui.label("Second row, second column");
-            //     ui.label("Second row, third column");
-            //     ui.end_row();
-
-            //     ui.horizontal(|ui| {
-            //         ui.label("Same");
-            //         ui.label("cell");
-            //     });
-            //     ui.label("Third row, second column");
-            //     ui.end_row();
-            // });
+            
         });
     }
 }
