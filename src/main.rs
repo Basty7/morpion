@@ -47,6 +47,7 @@ fn add_fonts(ctx: &egui::Context) {
     ctx.set_fonts(fonts);
 }
 
+
 // Main function obviously ;)
 #[cfg(not(target_arch = "wasm32"))]
 fn main() {
@@ -70,7 +71,7 @@ fn main() {
             egui_extras::install_image_loaders(&cc.egui_ctx);
             add_fonts(&cc.egui_ctx);
             // Create the app
-            Box::<Myapp>::default()
+            Ok(Box::<Myapp>::default())
         }),
     );
 }
@@ -87,7 +88,7 @@ fn main() {
                 Box::new(|cc| {
                     egui_extras::install_image_loaders(&cc.egui_ctx);
                     add_fonts(&cc.egui_ctx);
-                    Box::<Myapp>::default()
+                    Ok(Box::<Myapp>::default())
                 }),
             )
             .await;
