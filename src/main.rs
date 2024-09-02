@@ -12,14 +12,6 @@ use egui::{FontFamily, FontId, RichText, Vec2};
 #[cfg(target_arch = "wasm32")]
 use eframe::web_sys;
 
-// DONE: Check if someone won the game
-// DONE: Handle the case where the game is a draw
-// DONE: Handle the end of the game
-// DONE: Add a way to restart the game
-// DONE: Add a warning when a player tries to play on a non-empty case
-// DONE: Add an icon to the window
-// TODO: (later) Add a way to play against the computer
-
 fn add_fonts(ctx: &egui::Context) {
     // Load fonts
     // Start with the default fonts (we will be adding to them rather than replacing them).
