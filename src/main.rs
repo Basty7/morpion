@@ -244,9 +244,9 @@ fn check_game_end(board: &mut GameBoard) -> i32 {
         }
     }
     if draw {
-        return 3;
+        3
     } else {
-        return 0;
+        0
     }
 }
 
@@ -257,7 +257,7 @@ impl eframe::App for Myapp {
                 ui.heading(
                     RichText::new(format!(
                         "Play Tic-Tac-Toe \nIt's player {}'s turn.",
-                        (self.turn as i32 + 1)
+                        self.turn as i32 + 1
                     ))
                         .font(FontId::new(20.0, FontFamily::Name("GaMaamli".into()))),
                 );
