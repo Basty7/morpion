@@ -1,7 +1,4 @@
-#![cfg_attr(
-    not(debug_assertions),
-    windows_subsystem = "windows"
-)] // hide console window on Windows in release
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
 use egui_extras;
 
@@ -39,7 +36,6 @@ fn add_fonts(ctx: &egui::Context) {
     ctx.set_fonts(fonts);
 }
 
-
 // Main function obviously ;)
 #[cfg(not(target_arch = "wasm32"))]
 fn main() {
@@ -69,41 +65,7 @@ fn main() {
 }
 
 #[cfg(target_arch = "wasm32")]
-fn main() {
-    let web_options = eframe::WebOptions::default();
-
-    wasm_bindgen_futures::spawn_local(async {
-        let start_result = eframe::WebRunner::new()
-            .start(
-                "the_canvas_id",
-                web_options,
-                Box::new(|cc| {
-                    egui_extras::install_image_loaders(&cc.egui_ctx);
-                    add_fonts(&cc.egui_ctx);
-                    Ok(Box::<Myapp>::default())
-                }),
-            )
-            .await;
-
-        // Remove the loading text and spinner
-        let loading_text = web_sys::window()
-            .and_then(|w| w.document())
-            .and_then(|d| d.get_element_by_id("loading_text"));
-        if let Some(loading_text) = loading_text {
-            match start_result {
-                Ok(_) => {
-                    loading_text.remove();
-                }
-                Err(e) => {
-                    loading_text.set_inner_html(
-                        "<p> The app has crashed. See the developer console for details. </p>",
-                    );
-                    panic!("Failed to start eframe: {e:?}");
-                }
-            }
-        }
-    });
-}
+fn main() {}
 
 //
 struct Myapp {
@@ -251,16 +213,14 @@ impl eframe::App for Myapp {
                         "Play Tic-Tac-Toe \nIt's player {}'s turn.",
                         self.turn as i32 + 1
                     ))
-                        .font(FontId::new(20.0, FontFamily::Name("GaMaamli".into()))),
+                    .font(FontId::new(20.0, FontFamily::Name("GaMaamli".into()))),
                 );
 
                 let play_again = ui
                     .add_sized(
                         [40., 40.],
                         match ctx.style().visuals.dark_mode {
-                            true => {
-                                egui::ImageButton::new(egui::include_image!("../assets/R.png"))
-                            }
+                            true => egui::ImageButton::new(egui::include_image!("../assets/R.png")),
                             false => {
                                 egui::ImageButton::new(egui::include_image!("../assets/R-B.png"))
                             }
@@ -271,6 +231,7 @@ impl eframe::App for Myapp {
                 if play_again.clicked() {
                     self.board = GameBoard::default();
                     self.turn = false;
+                    self.ended = false;
                 }
 
                 egui::widgets::global_dark_light_mode_buttons(ui);
